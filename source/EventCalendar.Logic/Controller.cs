@@ -112,7 +112,7 @@ namespace EventCalendar.Logic
                     {
                         if (ev is LimitedEvent)
                         {
-                            if ((ev as LimitedEvent).Participators.Count <= (ev as LimitedEvent).MaxParticipators)
+                            if ((ev as LimitedEvent).Participators.Count < (ev as LimitedEvent).MaxParticipators)
                             {
                                 ev.Participators.Add(person);
                                 return true;
@@ -169,14 +169,20 @@ namespace EventCalendar.Logic
         /// <returns>Liste der Teilnehmer oder null im Fehlerfall</returns>
         public IList<Person> GetParticipatorsForEvent(Event ev)
         {
+            IList<Person> SortedParticipators = new List<Person>();
+
             foreach (Event item in _events)
             {
-                if (item.Equals(ev))
+                if (item.Participators.Count > 0)
                 {
-                    return item.Participators;
+                    if (item.Equals(ev))
+                    {
+                        SortedParticipators = item.Participators;
+                    }
                 }
             }
-            return null;
+
+            return ev != null ? SortedParticipators : null;
         }
 
         /// <summary>
@@ -186,7 +192,20 @@ namespace EventCalendar.Logic
         /// <returns>Liste der Veranstaltungen oder null im Fehlerfall</returns>
         public List<Event> GetEventsForPerson(Person person)
         {
-            return null;
+            List<Event> FilteredPersonEvent = new List<Event>();
+
+            foreach (Event item in _events)
+            {
+                if (item.Participators.Count > 0)
+                {
+                    if (item.Participators[0].Equals(person))
+                    {
+                        FilteredPersonEvent.Add(item);
+                    }
+                }
+            }
+
+            return person != null ? FilteredPersonEvent : null;
         }
 
         /// <summary>
@@ -196,7 +215,27 @@ namespace EventCalendar.Logic
         /// <returns>Anzahl oder 0 im Fehlerfall</returns>
         public int CountEventsForPerson(Person participator)
         {
-            return 0;
+            //int count = 0;
+            //int index = 0;
+
+            //foreach (Event item in _events)
+            //{
+            //    if(item.Participators.Count > 0)
+            //    {
+            //        if (item.Participators[index].Equals(participator))
+            //        {
+            //            count++;
+            //        }
+            //        else
+            //        {
+            //            index++;
+            //        }
+            //    }
+
+            //}
+
+            //return count > 0 ? count : 0;
+            return participator != null ? GetEventsForPerson(participator).Count : 0;
         }
 
     }

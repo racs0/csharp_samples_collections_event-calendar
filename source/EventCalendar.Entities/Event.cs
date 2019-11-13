@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EventCalendar.Entities
 {
-    public class Event
+    public class Event : IComparable<Event>
     {
         private string _title;
         private DateTime _termin;
@@ -37,6 +37,11 @@ namespace EventCalendar.Entities
             _title = title;
             _termin = termin;
             _participators = new List<Person>();
+        }
+
+        public int CompareTo(Event other)
+        {
+            return Termin.CompareTo(other.Termin);
         }
     }
 }
